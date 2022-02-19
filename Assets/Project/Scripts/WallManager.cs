@@ -34,7 +34,7 @@ public class WallManager : MonoBehaviour
         }
     }
 
-    void Init_ChildWalls(){
+    void Init_ChildWalls(){ // 壁の長さが複数部屋分ある場合、ひとつひとつ分割
         for(int i = 1; i < len; i++){
             GameObject wall_child = 
                 Instantiate(WallChildPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;

@@ -71,17 +71,17 @@ public class EnemyController : MonoBehaviour
         if(gms.GameIsStop()) return;
         time += Time.deltaTime;
 
-        if(!isStart){
+        if(!isStart){   // 出現~移動開始の間
             DisplayAppear();
             return;
         }
 
-        if(isRush){
+        if(isRush){ // 突進時
             Rush();
             return;
         }
 
-        if(!isTurning){
+        if(!isTurning){ // 四方いずれかを向いているとき
             int fl = FindLight(now_angle);
             if(fl != -1) SwitchMoveMode(fl);
         }

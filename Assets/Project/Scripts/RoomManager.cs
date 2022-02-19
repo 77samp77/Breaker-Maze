@@ -170,7 +170,7 @@ public class RoomManager : MonoBehaviour
     bool routeIsLinked; // 点検中のルートがスタート地点とつながっているか
     List<int> inspectingRooms = new List<int>();  // 点検中の部屋番号(z * max(x) + x)
 
-    void InspectMaze(){
+    void InspectMaze(){ // 点検全体
         roomIsInspected = new bool[rooms_num_x, rooms_num_z];
         roomIsLinked = new bool[rooms_num_x, rooms_num_z];
         roomIsLinked[start_x, start_z] = true;
@@ -195,7 +195,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void InspectRoute(){
+    void InspectRoute(){    // 始点に戻るまで一部屋ずつ点検
         InspectRoom(ins_d, ins_rx, ins_rz);
         int temp_count = 0;
         while(!IsStartedState(ins_d, ins_rx, ins_rz) && !temp_isFinish && temp_count < 1000){
@@ -210,7 +210,7 @@ public class RoomManager : MonoBehaviour
     }
 
     bool temp_isFinish;
-    void InspectRoom(int d, int rx, int rz){
+    void InspectRoom(int d, int rx, int rz){    // 1部屋の点検、進行方向の変更
         if(roomIsLinked[rx, rz]) routeIsLinked = true;
         inspectingRooms.Add(rz * rooms_num_x + rx);
         int left = d - 1;
@@ -239,7 +239,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void GoForward(int d, int rx, int rz){
+    void GoForward(int d, int rx, int rz){  // 方向dに対し前進
         switch(d){
             case 0:
                 rz++;
@@ -259,7 +259,7 @@ public class RoomManager : MonoBehaviour
         ins_rz = rz;
     }
 
-    bool decideStartDirect(int srx, int srz){
+    bool decideStartDirect(int srx, int srz){   // 始点の周辺の壁をもとに、最初の進行方向を決定
         for(int d = 0; d < 4; d++){
             if(!ThereIsWall(d, srx, srz)){
                 SetFirstState(d, srx, srz);
@@ -269,7 +269,7 @@ public class RoomManager : MonoBehaviour
         return false;
     }
 
-    bool ThereIsWall(int d, int rx, int rz){
+    bool ThereIsWall(int d, int rx, int rz){    // 方向dに壁があるか否か
         switch(d){
             case 0:
                 if(isWalls_hor[rx, rz + 1]) return true;
@@ -287,27 +287,27 @@ public class RoomManager : MonoBehaviour
         return false;
     }
 
-    void SetFirstState(int d, int rx, int rz){
+    void SetFirstState(int d, int rx, int rz){  // 点検開始時の位置、方向を記録
         ins_sd = d;
         ins_srx = rx;
         ins_srz = rz;
         SetInspectState(d, rx, rz);
     }
 
-    void SetInspectState(int d, int rx, int rz){
+    void SetInspectState(int d, int rx, int rz){    // 現状の位置、方向を記録
         ins_d = d;
         ins_rx = rx;
         ins_rz = rz;
     }
 
-    bool IsStartedState(int d, int rx, int rz){
+    bool IsStartedState(int d, int rx, int rz){ // 現状が点検開始時と同じか否か
         if(d != ins_sd) return false;
         if(rx != ins_srx) return false;
         if(rz != ins_srz) return false;
         return true;
     }
 
-    void CommitInspectedRooms(){
+    void CommitInspectedRooms(){    // 点検済の部屋を記録
         for(int i = 0; i < inspectingRooms.Count; i++){
             int temp_rx = inspectingRooms[i] % rooms_num_x;
             int temp_rz = Mathf.FloorToInt(inspectingRooms[i] / rooms_num_x);
@@ -325,7 +325,7 @@ public class RoomManager : MonoBehaviour
         inspectingRooms.Clear();
     }
 
-    void DeleteOneIsWall(int rx, int rz){
+    void DeleteOneIsWall(int rx, int rz){   // 任意の部屋[rx, rz]の壁をひとつ削除
         for(int d = 0; d < 4; d++){
             switch(d){
                 case 0:
@@ -356,14 +356,14 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    bool CanDeleteTheWall(bool[,] isWallsArray, int wx, int wz){
+    bool CanDeleteTheWall(bool[,] isWallsArray, int wx, int wz){    // 壁消せるかどうか
         if(!isWallsArray[wx, wz]) return false;
         if(isWallsArray == isWalls_ver && (wx == 0 || wx == walls_ver_num_x - 1)) return false;
         if(isWallsArray == isWalls_hor && (wz == 0 || wz == walls_hor_num_z - 1)) return false;
         return true;
     }
 
-    int RoomIsUninspected(){
+    int RoomIsUninspected(){    // 未点検の部屋があった場合、その部屋番号を返す
         for(int x = 0; x < rooms_num_x; x++){
             for(int z = 0; z < rooms_num_z; z++){
                 if(!roomIsInspected[x, z]){
@@ -443,7 +443,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void InstWall(bool isVer, int fwx, int fwz, int count){
+    void InstWall(bool isVer, int fwx, int fwz, int count){ // 壁生成
         GameObject wall = 
             Instantiate(WallPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         wall.name = WallPrefab.name;
@@ -493,7 +493,7 @@ public class RoomManager : MonoBehaviour
         breaker_z = start_z;
     }
 
-    void SetBreaker(){
+    void SetBreaker(){  // ブレーカーがある部屋の設定
         GameObject room = rooms[breaker_x, breaker_z];
         Vector3 r_pos = room.transform.position;
         breaker = Instantiate(BreakerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -531,13 +531,13 @@ public class RoomManager : MonoBehaviour
         return -1;
     }
 
-    void SetGoal(GameObject room){
-        GameObject p_floor = room.transform.Find("Floor").gameObject;
-        Vector3 pf_pos = p_floor.transform.position;
-        GameObject g_floor = Instantiate(GoalFloorPrefab, new Vector3(pf_pos.x, -0.5f, pf_pos.z), Quaternion.Euler(90, 90, 0));
-        Destroy(p_floor);
-        g_floor.name = GoalFloorPrefab.name;
-        g_floor.transform.SetParent(room.transform);
+    void SetGoal(GameObject room){  // ゴール地点の設定
+        // GameObject p_floor = room.transform.Find("Floor").gameObject;
+        // Vector3 pf_pos = p_floor.transform.position;
+        // GameObject g_floor = Instantiate(GoalFloorPrefab, new Vector3(pf_pos.x, -0.5f, pf_pos.z), Quaternion.Euler(90, 90, 0));
+        // Destroy(p_floor);
+        // g_floor.name = GoalFloorPrefab.name;
+        // g_floor.transform.SetParent(room.transform);
 
         GameObject p_light = room.transform.Find("Light").gameObject;
         LightManager p_lms = p_light.GetComponent<LightManager>();
@@ -548,7 +548,7 @@ public class RoomManager : MonoBehaviour
         fixLights_count++;
     }
 
-    void FixRandomLights(){
+    void FixRandomLights(){ // ランダムにいくつかの部屋のライト点ける
         for(int i = fixLights_count; i < fixLights_max; i++){
             int fl_rx = Random.Range(0, rooms_num_x);
             int fl_rz = Random.Range(0, rooms_num_z);
@@ -679,7 +679,7 @@ public class RoomManager : MonoBehaviour
         Camera.transform.localPosition = new Vector3(rooms_num_x * 10 - 10, rooms_num_z * 20, -5);
     }
 
-    void SetGoalPosition(){
+    void SetGoalPosition(){ // ゴール地点の位置決め
         goal_x = Random.Range(0, rooms_num_x);
         goal_z = Random.Range(0, rooms_num_z);
         while(goal_x == start_x && goal_z == start_z){
