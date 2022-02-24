@@ -774,7 +774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -1400,6 +1400,8 @@ MonoBehaviour:
     type: 3}
   GoalFloorPrefab: {fileID: 1360702518342410506, guid: a2ee23148aeb7114a9829b1dea1f94db,
     type: 3}
+  LadderPrefab: {fileID: 8468589493097766099, guid: 0210a94e02e56d9499d47b1764bc6f14,
+    type: 3}
   PlayerPrefab: {fileID: 6802446393770665764, guid: a61f3137d73091f4dbcf9eb3540125eb,
     type: 3}
   BreakerPrefab: {fileID: 3721439667424503635, guid: 54d02d3089cb1ec4196a572ff98239a2,
@@ -1410,8 +1412,8 @@ MonoBehaviour:
     type: 3}
   GameManager: {fileID: 1385723657}
   BreakerManager: {fileID: 94794555}
-  rooms_num_x: 8
-  rooms_num_z: 8
+  rooms_num_x: 6
+  rooms_num_z: 6
   bright_rooms: 
   walls: []
   start_x: 0

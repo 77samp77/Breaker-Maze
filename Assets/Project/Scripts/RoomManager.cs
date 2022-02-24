@@ -8,6 +8,7 @@ public class RoomManager : MonoBehaviour
     public GameObject RoomPrefab;
     public GameObject WallPrefab;
     public GameObject GoalFloorPrefab;
+    public GameObject LadderPrefab;
     public GameObject PlayerPrefab;
     public GameObject BreakerPrefab;
     public GameObject ItemPrefab;
@@ -532,18 +533,27 @@ public class RoomManager : MonoBehaviour
     }
 
     void SetGoal(GameObject room){  // ゴール地点の設定
-        // GameObject p_floor = room.transform.Find("Floor").gameObject;
-        // Vector3 pf_pos = p_floor.transform.position;
-        // GameObject g_floor = Instantiate(GoalFloorPrefab, new Vector3(pf_pos.x, -0.5f, pf_pos.z), Quaternion.Euler(90, 90, 0));
-        // Destroy(p_floor);
-        // g_floor.name = GoalFloorPrefab.name;
-        // g_floor.transform.SetParent(room.transform);
+        GameObject p_floor = room.transform.Find("Floor").gameObject;
+        Vector3 pf_pos = p_floor.transform.position;
+        Vector3 pf_scl = p_floor.transform.localScale;
+        GameObject g_floor = Instantiate(GoalFloorPrefab, new Vector3(pf_pos.x, -0.5f, pf_pos.z), Quaternion.Euler(90, 90, 0));
+        Destroy(p_floor);
+        g_floor.name = GoalFloorPrefab.name;
+        g_floor.transform.SetParent(room.transform);
+
+        GameObject ladder = Instantiate(LadderPrefab, new Vector3(0, 0, 0), Quaternion.Euler(0, 180, 0));
+        Vector3 lad_scl = ladder.transform.localScale;
+        Vector3 lad_pos = new Vector3(pf_pos.x + pf_scl.x * 0.2f,  lad_scl.y / 2, pf_pos.z + pf_scl.z * 0.3f);
+        ladder.transform.position = lad_pos;
+        ladder.name = LadderPrefab.name;
+        ladder.transform.SetParent(room.transform);
 
         GameObject p_light = room.transform.Find("Light").gameObject;
         LightManager p_lms = p_light.GetComponent<LightManager>();
         Light p_ll = p_light.GetComponent<Light>();
         p_light.SetActive(true);
         p_lms.isFix = true;
+        p_ll.intensity = 5;
         p_ll.color = new Color32(200, 255, 200, 1);
         fixLights_count++;
     }
