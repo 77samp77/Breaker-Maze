@@ -1909,6 +1909,9 @@ MonoBehaviour:
   enemy_put_sec: 0000000000000000000000000000000000000000000000000000000000000000
   enemies_count: 0
   enemies_count_max: 0
+  charas: []
+  trans_walls: []
+  not_trans_walls: []
 --- !u!1 &1422810174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1944,7 +1947,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -351, y: 8.5}
+  m_AnchoredPosition: {x: -351, y: 20}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1422810176
@@ -2021,7 +2024,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: -351, y: 173.5}
-  m_SizeDelta: {x: 140, y: 160}
+  m_SizeDelta: {x: 140, y: 150}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1518338234
 MonoBehaviour:

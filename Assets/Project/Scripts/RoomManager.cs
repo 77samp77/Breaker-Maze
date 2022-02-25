@@ -81,6 +81,7 @@ public class RoomManager : MonoBehaviour
         rooms[x, z] = room;
 
         if(x == start_x && z == start_z) SetStart(room);
+        if(x == breaker_x && z == breaker_z) SetBreaker(room);
         if(x == goal_x && z == goal_z) SetGoal(room);
 
         int iir = ItemInRoom(x, z);
@@ -413,7 +414,6 @@ public class RoomManager : MonoBehaviour
     }
 
     void InstWalls(){   // 壁配列をもとにすべての壁を生成
-
         for(int x = 0; x < walls_ver_num_x; x++){
             for(int z = 0; z < walls_ver_num_z; z++){
                 if(isWalls_ver[x, z]){
@@ -491,36 +491,31 @@ public class RoomManager : MonoBehaviour
         p_lms.isFix = true;
         p_ll.color = new Color32(255, 255, 200, 1);
         fixLights_count++;
-
-        breaker_x = start_x;
-        breaker_z = start_z;
     }
 
-    void SetBreaker(){  // ブレーカーがある部屋の設定
-        GameObject room = rooms[breaker_x, breaker_z];
-        Vector3 r_pos = room.transform.position;
+    void SetBreaker(GameObject breakerRoom){  // ブレーカーがある部屋の設定
         breaker = Instantiate(BreakerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         breaker.name = BreakerPrefab.name;
+
+        Vector3 br_pos = breakerRoom.transform.position;
         Vector3 b_pos = breaker.transform.position;
         Vector3 b_scl = breaker.transform.localScale;
+        b_pos.x = br_pos.x;
+        b_pos.y = br_pos.y + b_scl.y;
+        b_pos.z = br_pos.z + f_scl.z / 2 - b_scl.x;
+        breaker.transform.position = new Vector3(b_pos.x, b_pos.y, b_pos.z);
+
         Vector3 b_rot = breaker.transform.localEulerAngles;
         b_rot.y = 90;
-        b_pos.x = r_pos.x;
-        b_pos.y = r_pos.y + b_scl.y;
-
-        while(!isWalls_hor[breaker_x, breaker_z + 1]) breaker_z++;
-        GameObject breakerRoom = rooms[breaker_x, breaker_z];
-        Vector3 br_pos = breakerRoom.transform.position;
-        b_pos.z = br_pos.z + f_scl.z / 2 - b_scl.x;
         breaker.transform.localEulerAngles = new Vector3(b_rot.x, b_rot.y, b_rot.z);
-        breaker.transform.position = new Vector3(b_pos.x, b_pos.y, b_pos.z);
 
         GameObject br_light = breakerRoom.transform.Find("Light").gameObject;
         LightManager br_lms = br_light.GetComponent<LightManager>();
         Light br_ll = br_light.GetComponent<Light>();
         br_light.SetActive(true);
         br_lms.isFix = true;
-        if(!(breaker_x == start_x && breaker_z == start_z)){
+        if(!(breaker_x == start_x && breaker_z == start_z)
+            && !(breaker_x == goal_x && breaker_z == goal_z)){
             br_ll.color = new Color32(255, 255, 200, 1);
             fixLights_count++;
         }
@@ -677,6 +672,7 @@ public class RoomManager : MonoBehaviour
         InstWallsArrays();
         GenerateMaze();
         InspectMaze();
+        SetBreakerPosition();
         SetGoalPosition();
 
         rooms = new GameObject[rooms_num_x, rooms_num_z];
@@ -686,16 +682,23 @@ public class RoomManager : MonoBehaviour
             }
         }
         InstWalls();
-        SetBreaker();
         FixRandomLights();
         
         Camera.transform.localPosition = new Vector3(rooms_num_x * 10 - 10, rooms_num_z * 20, -5);
     }
 
+    void SetBreakerPosition(){  // ブレーカーの位置決め
+        breaker_x = start_x;
+        breaker_z = start_z;
+        while(!isWalls_hor[breaker_x, breaker_z + 1]) breaker_z++;
+    }
+
     void SetGoalPosition(){ // ゴール地点の位置決め
         goal_x = Random.Range(0, rooms_num_x);
         goal_z = Random.Range(0, rooms_num_z);
-        while((goal_x == start_x && goal_z == start_z) || !isWalls_hor[goal_x, goal_z + 1]){
+        while((goal_x == start_x && goal_z == start_z)
+                || (goal_x == breaker_x && goal_z == breaker_z)
+                || !isWalls_hor[goal_x, goal_z + 1]){
             goal_x = Random.Range(0, rooms_num_x);
             goal_z = Random.Range(0, rooms_num_z);
         }
