@@ -53,6 +53,9 @@ public class GameManagerScript : MonoBehaviour
     public int enemies_count;
     public int enemies_count_max;
 
+    public List<GameObject> charas = new List<GameObject>();    // 自機、敵、アイテムまとめ
+    public List<GameObject> trans_walls = new List<GameObject>();   // 透過する壁
+    public List<GameObject> not_trans_walls = new List<GameObject>();   // 透過しない壁
 
     void Start()
     {
@@ -95,7 +98,7 @@ public class GameManagerScript : MonoBehaviour
             }
         }
 
-        // if(isStart) time -= Time.deltaTime;
+        TransparentWalls();
 
         if(GameIsStop()){
             time_enemyFindPlayer += Time.deltaTime;
@@ -125,6 +128,69 @@ public class GameManagerScript : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.R)) Reset();
         if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
+    }
+
+    void TransparentWalls(){    // 壁透過
+        InitTransWallsArray();
+        InitNotTransWallArray();
+        foreach(GameObject twall in trans_walls){
+            not_trans_walls.Remove(twall);
+            Color wall_color = twall.GetComponent<Renderer>().material.color;
+            if(wall_color.a > 0.5f){
+                wall_color.a -= 0.1f;
+                twall.GetComponent<Renderer>().material.color = wall_color;
+            }
+        }
+        foreach(GameObject ntwall in not_trans_walls){
+            Color wall_color = ntwall.GetComponent<Renderer>().material.color;
+            if(wall_color.a <= 1){
+                wall_color.a += 0.05f;
+                ntwall.GetComponent<Renderer>().material.color = wall_color;
+            }
+        }
+    }
+
+    void InitTransWallsArray(){ // trans_walls(透過する壁の配列)の初期化
+        trans_walls.Clear();
+        foreach(GameObject chara in charas){
+            int rx = 0, rz = 0;
+            if(chara.name == "Player"){
+                PlayerController pcs = chara.GetComponent<PlayerController>();
+                rx = pcs.rx;
+                rz = pcs.rz;
+            }
+            else if(chara.name == "Enemy"){
+                EnemyController ecs = chara.GetComponent<EnemyController>();
+                rx = ecs.rx;
+                rz = ecs.rz;
+            }
+            else if(chara.name == "Item"){
+                ItemController ics = chara.GetComponent<ItemController>();
+                rx = ics.rx;
+                rz = ics.rz;
+            }
+            GameObject c_light = rms.rooms[rx, rz].transform.Find("Light").gameObject;
+            if(!c_light.activeSelf) continue;
+
+            Vector3 chara_screen_pos = Camera.main.WorldToScreenPoint(chara.transform.position);
+            Ray ray_chara = Camera.main.ScreenPointToRay(chara_screen_pos);
+            RaycastHit[] hits = Physics.RaycastAll(ray_chara);
+            foreach(RaycastHit hit in hits){
+                GameObject hit_object = hit.collider.gameObject;
+                if(hit_object.tag == "Wall"){
+                    WallManager wms = hit_object.GetComponent<WallManager>();
+                    if(!wms.isVer && wms.wx == rx && wms.wz <= rz) trans_walls.Add(hit_object);
+                }
+            }
+        }
+    }
+
+    void InitNotTransWallArray(){ // not_trans_walls(透過しない壁の配列)の初期化
+        not_trans_walls.Clear();
+        foreach(GameObject wall in rms.walls){
+            WallManager wms = wall.GetComponent<WallManager>();
+            if(!wms.isVer) not_trans_walls.Add(wall);
+        }
     }
 
     public void GameStart(){
@@ -173,11 +239,11 @@ public class GameManagerScript : MonoBehaviour
     }
 
     public void Reset(){ 
-        rms.Reset();
-        bms.Reset();
-
         ResetGmsVariables();
         ResetUIs();
+
+        rms.Reset();
+        bms.Reset();
     }
 
     void ResetGmsVariables(){    // gmsの変数周りのリセット
@@ -195,6 +261,7 @@ public class GameManagerScript : MonoBehaviour
             if(enemies[i] != null) Destroy(enemies[i]);
         }
         enemies_count = 0;
+        charas.Clear();
     }
 
     void ResetUIs(){    // UI周りのリセット

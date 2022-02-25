@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class WallManager : MonoBehaviour
 {
+    GameObject rm;
+    RoomManager rms;
+
     public GameObject WallChildPrefab;
     public int wx, wz, len;
     public bool isVer;
@@ -17,21 +20,14 @@ public class WallManager : MonoBehaviour
     {
         player = GameObject.Find("Player");
         pcs = player.GetComponent<PlayerController>();
+        rm = GameObject.Find("RoomManager");
+        rms = rm.GetComponent<RoomManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
         if(!isChild && !isSetLength) Init_ChildWalls();
-        if(isVer) return;
-
-        if(wx != pcs.px || wz != pcs.pz){
-            Color wall_color = this.GetComponent<Renderer>().material.color;
-            if(wall_color.a <= 1){
-                wall_color.a += 0.05f;
-                this.GetComponent<Renderer>().material.color = wall_color;
-            }
-        }
     }
 
     void Init_ChildWalls(){ // 壁の長さが複数部屋分ある場合、ひとつひとつ分割
@@ -39,6 +35,7 @@ public class WallManager : MonoBehaviour
             GameObject wall_child = 
                 Instantiate(WallChildPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
             wall_child.transform.parent = this.transform;
+            rms.walls.Add(wall_child);
                 
             WallManager wcms = wall_child.GetComponent<WallManager>();
             wcms.isVer = isVer;

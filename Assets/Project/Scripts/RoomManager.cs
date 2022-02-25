@@ -90,7 +90,7 @@ public class RoomManager : MonoBehaviour
     public void SetEnemy(){ // 敵の出現位置決め、PutEnemy()で設置
         int fex = Random.Range(0, rooms_num_x);
         int fez = Random.Range(0, rooms_num_z);
-        while(CalDistSquare(fex, fez, pcs.px, pcs.pz) < 3 || CheckLightInRoom(fex, fez)){
+        while(CalDistSquare(fex, fez, pcs.rx, pcs.rz) < 3 || CheckLightInRoom(fex, fez)){
             if(fex >= rooms_num_x - 1){
                 fex = 0;
                 if(fez >= rooms_num_z - 1) fez = 0;
@@ -114,6 +114,7 @@ public class RoomManager : MonoBehaviour
         Vector3 r_pos = room.transform.position;
         enemy.transform.position = new Vector3(r_pos.x, r_pos.y + e_scl.y, r_pos.z);
         gms.enemies[gms.enemies_count - 1] = enemy; 
+        gms.charas.Add(enemy);
     }
 
     int ItemInRoom(int x, int z){   // 指定した部屋にアイテムがあった場合、その番号を返す
@@ -481,6 +482,7 @@ public class RoomManager : MonoBehaviour
         Vector3 r_pos = room.transform.position;
         Vector3 pl_scl = player.transform.localScale;
         player.transform.position = new Vector3(r_pos.x, r_pos.y + pl_scl.y/2, r_pos.z);
+        gms.charas.Add(player);
 
         GameObject p_light = room.transform.Find("Light").gameObject;
         LightManager p_lms = p_light.GetComponent<LightManager>();
@@ -619,6 +621,7 @@ public class RoomManager : MonoBehaviour
             new Vector3(r_pos.x, r_pos.y + i_scl.y, r_pos.z);
             
         items[num] = item;
+        gms.charas.Add(item);
     }
 
     public bool CheckLightInRoom(int rx, int rz){   // 部屋の電気がついているか

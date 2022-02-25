@@ -296,7 +296,7 @@ public class EnemyController : MonoBehaviour
     }
 
     bool ThereIsPlayer(int rx, int rz){ // 指定した部屋にプレイヤーがいるか
-        if(rx == pcs.px && rz == pcs.pz) return true;
+        if(rx == pcs.rx && rz == pcs.rz) return true;
         return false;
     }
 

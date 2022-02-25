@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     GameObject bm;
     BreakerManager bms;
 
-    public int px, pz;
+    public int rx, rz;
 
     List<GameObject> colliders = new List<GameObject>();
     public GameObject[] wallUI = new GameObject[4];    // 0123...下上左右
@@ -73,11 +73,10 @@ public class PlayerController : MonoBehaviour
         move();
         SetPositions();
         
-        SearchWallAroundPlayer(px, pz);
-        p_light = rms.rooms[px, pz].transform.Find("Light").gameObject;
-        if(p_light.activeSelf) TransparentWallFrontPlayer(px, pz);
+        SearchWallAroundPlayer(rx, rz);
+        p_light = rms.rooms[rx, rz].transform.Find("Light").gameObject;
         CalFearGauge();
-        if(Input.GetKeyDown(KeyCode.Space)) Examine(px, pz);
+        if(Input.GetKeyDown(KeyCode.Space)) Examine(rx, rz);
         CheckTouchingEnemy();
 
         if(!gms.isClear && GameIsClear()) GameClear();
@@ -107,8 +106,8 @@ public class PlayerController : MonoBehaviour
     void SetPositions(){    // 相対座標の対応
         Vector3 p_pos = this.transform.position;
         Vector3 f_scl = RoomPrefab.transform.Find("Floor").localScale;
-        px = (int)((p_pos.x + f_scl.x/2) / f_scl.x);
-        pz = (int)((p_pos.z + f_scl.z/2) / f_scl.z);
+        rx = (int)((p_pos.x + f_scl.x/2) / f_scl.x);
+        rz = (int)((p_pos.z + f_scl.z/2) / f_scl.z);
     }
 
     void CalFearGauge(){    // 暗闇ゲージの更新
@@ -163,8 +162,8 @@ public class PlayerController : MonoBehaviour
 
     bool GameIsClear(){ // ゲームクリアの条件を満たしているか
         if(!gms.toReturn) return false;
-        if(px != rms.goal_x) return false;
-        if(pz != rms.goal_z) return false;
+        if(rx != rms.goal_x) return false;
+        if(rz != rms.goal_z) return false;
         return true;
     }
 
@@ -195,26 +194,6 @@ public class PlayerController : MonoBehaviour
             if(list[i].name == _name) return i;
         }
         return -1;
-    }
-
-    void TransparentWallFrontPlayer(int px, int pz){
-        Vector3 player_screen_pos = Camera.main.WorldToScreenPoint(this.transform.position);
-        Ray ray_player = Camera.main.ScreenPointToRay(player_screen_pos);
-        // Debug.DrawRay (ray_player.origin, ray_player.direction * 1000, Color.red, 1, false);
-
-        RaycastHit[] hits = Physics.RaycastAll(ray_player);
-        foreach(RaycastHit hit in hits){
-            GameObject hit_object = hit.collider.gameObject;
-            if(hit_object.tag == "Wall"){
-                Color wall_color = hit_object.GetComponent<Renderer>().material.color;
-                WallManager wms = hit_object.GetComponent<WallManager>();
-                if(wms.wz > pz) return;
-                if(!wms.isVer && wms.wx == px && wall_color.a > 0.5f){
-                    wall_color.a -= 0.1f;
-                    hit_object.GetComponent<Renderer>().material.color = wall_color;
-                }
-            }
-        }
     }
     
     void SearchWallAroundPlayer(int px, int pz){    // プレイヤーが四方の壁に触れているか
