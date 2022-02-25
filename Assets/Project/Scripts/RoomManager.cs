@@ -658,7 +658,6 @@ public class RoomManager : MonoBehaviour
             start_x = Random.Range(0, rooms_num_x);
             start_z = Random.Range(0, rooms_num_z);
         }
-        SetGoalPosition();
 
         int rooms_num = rooms_num_x * rooms_num_z;
         gms.total_items = Mathf.FloorToInt(rooms_num / 6);
@@ -675,6 +674,7 @@ public class RoomManager : MonoBehaviour
         InstWallsArrays();
         GenerateMaze();
         InspectMaze();
+        SetGoalPosition();
 
         rooms = new GameObject[rooms_num_x, rooms_num_z];
         for(int x = 0; x < rooms_num_x; x++){
@@ -692,7 +692,7 @@ public class RoomManager : MonoBehaviour
     void SetGoalPosition(){ // ゴール地点の位置決め
         goal_x = Random.Range(0, rooms_num_x);
         goal_z = Random.Range(0, rooms_num_z);
-        while(goal_x == start_x && goal_z == start_z){
+        while((goal_x == start_x && goal_z == start_z) || !isWalls_hor[goal_x, goal_z + 1]){
             goal_x = Random.Range(0, rooms_num_x);
             goal_z = Random.Range(0, rooms_num_z);
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BreakerManager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class BreakerManager : MonoBehaviour
     RoomManager rms;
 
     public GameObject ampsText;
-    Text att;
+    TextMeshProUGUI att;
     Color def_attc;
 
     public int limit;
@@ -31,7 +32,7 @@ public class BreakerManager : MonoBehaviour
         rnx = rms.rooms_num_x;
         rnz = rms.rooms_num_z;
 
-        att = ampsText.GetComponent<Text>();
+        att = ampsText.GetComponent<TextMeshProUGUI>();
         def_attc = att.color;
     }
 
@@ -41,8 +42,8 @@ public class BreakerManager : MonoBehaviour
 
         if(CalAmp() > limit) Trip();
 
-        if(isTrip) att.text = "TRIP";
-        else att.text = CalAmp() + "A";
+        if(isTrip) att.text = "<size=35>TRIP!!</size>";
+        else att.text = "<size=40>" + CalAmp() + "</size><size=25>A</size> /" + limit + "A";
 
         if(isTrip || CalAmp() > limit - 2) att.color = new Color(1, 0, 0);
         else att.color = def_attc;

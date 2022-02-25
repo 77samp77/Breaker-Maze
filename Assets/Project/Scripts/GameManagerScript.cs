@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameManagerScript : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class GameManagerScript : MonoBehaviour
     public GameObject itemText;
     Text itt;
     public GameObject itemsCountText;
-    Text ictt;
+    TextMeshProUGUI ictt;
 
     public GameObject GameOverPanel;
     public float gopAlpha;
@@ -69,7 +70,7 @@ public class GameManagerScript : MonoBehaviour
         stt = secText.GetComponent<Text>();
         ttt = timeText.GetComponent<Text>();
         itt = itemText.GetComponent<Text>();
-        ictt = itemsCountText.GetComponent<Text>();
+        ictt = itemsCountText.GetComponent<TextMeshProUGUI>();
         got = GameOverText.GetComponent<Text>();
 
         enemies_count_max = enemy_put_sec.Length;
@@ -110,7 +111,7 @@ public class GameManagerScript : MonoBehaviour
                 StartText.GetComponent<Text>().color = new Color(1, 1, 1, startAlpha);
             }
 
-            ictt.text = gain_items + "/" + total_items;
+            ictt.text = "<size=50>" + gain_items + "</size> /" + total_items;
             if(time < 20) ttt.color = new Color(1, 0, 0);
             if(time < 5) gopAlpha = 1 - time / 5;
             if(time <= 0) GameOver();
