@@ -26,6 +26,8 @@ public class GameManagerScript : MonoBehaviour
     public GameObject itemPanel;
     public GameObject itemText;
     Text itt;
+    public GameObject floorText;
+    TextMeshProUGUI ftt;
     public GameObject itemsCountText;
     TextMeshProUGUI ictt;
 
@@ -57,6 +59,8 @@ public class GameManagerScript : MonoBehaviour
     public List<GameObject> trans_walls = new List<GameObject>();   // 透過する壁
     public List<GameObject> not_trans_walls = new List<GameObject>();   // 透過しない壁
 
+    int floor = 1;
+
     void Start()
     {
         Application.targetFrameRate = 60;
@@ -72,6 +76,7 @@ public class GameManagerScript : MonoBehaviour
 
         stt = secText.GetComponent<Text>();
         ttt = timeText.GetComponent<Text>();
+        ftt = floorText.GetComponent<TextMeshProUGUI>();
         itt = itemText.GetComponent<Text>();
         ictt = itemsCountText.GetComponent<TextMeshProUGUI>();
         got = GameOverText.GetComponent<Text>();
@@ -90,6 +95,8 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
+        ftt.text = "<size=40>B" + floor + "</size><size=30>F</size>";
+
         if(enemies_count < enemy_put_sec.Length){
             enemy_time = timeLimit - time;
             if(enemy_time > enemy_put_sec[enemies_count]){
@@ -100,9 +107,11 @@ public class GameManagerScript : MonoBehaviour
 
         TransparentWalls();
 
-        if(GameIsStop() && !isPause){
-            time_enemyFindPlayer += Time.deltaTime;
-            if(!isGameOver && time_enemyFindPlayer - time > 1) GameOver();
+        if(GameIsStop()){
+            if(!isPause){
+                time_enemyFindPlayer += Time.deltaTime;
+                if(!isGameOver && time_enemyFindPlayer - time > 1) GameOver();
+            }
         }
         else{
             time -= Time.deltaTime;
@@ -245,6 +254,9 @@ public class GameManagerScript : MonoBehaviour
     }
 
     void ResetGmsVariables(){    // gmsの変数周りのリセット
+        if(isClear) floor++;
+        else if(isGameOver) floor = 1;
+
         isStart = false;
         isGameOver = false;
         isClear = false;

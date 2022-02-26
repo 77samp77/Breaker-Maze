@@ -172,17 +172,19 @@ public class RoomManager : MonoBehaviour
     bool[,] roomIsLinked;   // 部屋がスタート地点とつながっているか
     bool routeIsLinked; // 点検中のルートがスタート地点とつながっているか
     List<int> inspectingRooms = new List<int>();  // 点検中の部屋番号(z * max(x) + x)
+    int route_count;    // 点検ルートの本数
 
     void InspectMaze(){ // 点検全体
         roomIsInspected = new bool[rooms_num_x, rooms_num_z];
         roomIsLinked = new bool[rooms_num_x, rooms_num_z];
         roomIsLinked[start_x, start_z] = true;
         
+        route_count = 0;
         if(decideStartDirect(start_x, start_z)){
             InspectRoute();
+            route_count++;
         }
-        int temp_count = 0;
-        while(RoomIsUninspected() != -1 && temp_count < 100){
+        while(RoomIsUninspected() != -1 && route_count < 100){
             int temp = RoomIsUninspected();
             int temp_sx = temp % rooms_num_x;
             int temp_sz = Mathf.FloorToInt(temp / rooms_num_x);
@@ -193,8 +195,8 @@ public class RoomManager : MonoBehaviour
                 inspectingRooms.Add(temp);
                 CommitInspectedRooms();
             }
-            temp_count++;
-            if(temp_count == 99) Debug.Log("InspectMaze()");
+            route_count++;
+            if(route_count == 99) Debug.Log("InspectMaze()");
         }
     }
 
@@ -311,7 +313,17 @@ public class RoomManager : MonoBehaviour
     }
 
     void CommitInspectedRooms(){    // 点検済の部屋を記録
-        for(int i = 0; i < inspectingRooms.Count; i++){
+        int firstCommitRoom = 0;
+        if(route_count == 0 && inspectingRooms.Count < 9){
+            int del_w_rx = inspectingRooms[0] % rooms_num_x;
+            int del_w_rz = Mathf.FloorToInt(inspectingRooms[0] / rooms_num_x);
+            DeleteOneIsWall(del_w_rx, del_w_rz);
+            routeIsLinked = true;
+            roomIsLinked[del_w_rx, del_w_rz] = true;
+            firstCommitRoom = 1;
+        }
+
+        for(int i = firstCommitRoom; i < inspectingRooms.Count; i++){
             int temp_rx = inspectingRooms[i] % rooms_num_x;
             int temp_rz = Mathf.FloorToInt(inspectingRooms[i] / rooms_num_x);
             roomIsInspected[temp_rx, temp_rz] = true;
@@ -573,7 +585,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    void SetItemPosition(int num, int sx, int sz){  // アイテムを置く場所の決定
+    void SetAnItemPosition(int num, int sx, int sz){  // アイテム1つずつを置く場所の決定
         int ix = Random.Range(0, rooms_num_x);
         int iz = Random.Range(0, rooms_num_z);
         while((CalDistSquare(sx, sz, ix, iz) < 4 || OverlapItemPos(num, ix, iz))){
@@ -647,31 +659,18 @@ public class RoomManager : MonoBehaviour
         for(int i = 0; i < gms.total_items; i++) Destroy(items[i]);
     }
 
+    int rooms_num;
     void Init_Set(){    // 初期化の生成関連
-        if(gms.isClear){
-            start_x = goal_x;
-            start_z = goal_z;
-        }
-        else{
-            start_x = Random.Range(0, rooms_num_x);
-            start_z = Random.Range(0, rooms_num_z);
-        }
-
-        int rooms_num = rooms_num_x * rooms_num_z;
-        gms.total_items = Mathf.FloorToInt(rooms_num / 6);
-        item_x = new int[gms.total_items];
-        item_z = new int[gms.total_items];
-        for(int i = 0; i < gms.total_items; i++){
-            SetItemPosition(i, start_x, start_z);
-        }
-        items = new GameObject[gms.total_items];
-
-        fixLights_max = Mathf.FloorToInt(Mathf.Sqrt(rooms_num_x * rooms_num_z)) - 1;
-        bms.limit = Mathf.FloorToInt(rooms_num / 3) - (fixLights_max - 2);
+        SetStartPosition();
+        
+        rooms_num = rooms_num_x * rooms_num_z;
+        SetItemsPosition();
+        SetLightVals();
         
         InstWallsArrays();
         GenerateMaze();
         InspectMaze();
+
         SetBreakerPosition();
         SetGoalPosition();
 
@@ -685,6 +684,32 @@ public class RoomManager : MonoBehaviour
         FixRandomLights();
         
         Camera.transform.localPosition = new Vector3(rooms_num_x * 10 - 10, rooms_num_z * 20, -5);
+    }
+
+    void SetStartPosition(){
+        if(gms.isClear){
+            start_x = goal_x;
+            start_z = goal_z;
+        }
+        else{
+            start_x = Random.Range(0, rooms_num_x);
+            start_z = Random.Range(0, rooms_num_z);
+        }
+    }
+
+    void SetItemsPosition(){
+        gms.total_items = Mathf.FloorToInt(rooms_num / 6);
+        item_x = new int[gms.total_items];
+        item_z = new int[gms.total_items];
+        for(int i = 0; i < gms.total_items; i++){
+            SetAnItemPosition(i, start_x, start_z);
+        }
+        items = new GameObject[gms.total_items];
+    }
+
+    void SetLightVals(){
+        fixLights_max = Mathf.FloorToInt(Mathf.Sqrt(rooms_num_x * rooms_num_z)) - 1;
+        bms.limit = Mathf.FloorToInt(rooms_num / 3) - (fixLights_max - 2);
     }
 
     void SetBreakerPosition(){  // ブレーカーの位置決め
