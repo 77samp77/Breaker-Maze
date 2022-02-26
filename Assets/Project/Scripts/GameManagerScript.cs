@@ -39,7 +39,7 @@ public class GameManagerScript : MonoBehaviour
     float startAlpha = 1;
 
     public float timeLimit;
-    float time;
+    public float time;
     float time_clear, time_enemyFindPlayer;
 
     public CanvasGroup GameUI;
@@ -100,11 +100,9 @@ public class GameManagerScript : MonoBehaviour
 
         TransparentWalls();
 
-        if(GameIsStop()){
+        if(GameIsStop() && !isPause){
             time_enemyFindPlayer += Time.deltaTime;
-            if(!isGameOver && time_enemyFindPlayer - time > 1){
-                GameOver();
-            }
+            if(!isGameOver && time_enemyFindPlayer - time > 1) GameOver();
         }
         else{
             time -= Time.deltaTime;
@@ -216,7 +214,7 @@ public class GameManagerScript : MonoBehaviour
     }
 
     public void SetClear(){ // クリアタイムの決定、ClearUIを変更
-        Debug.Log("Clear()");
+        // Debug.Log("Clear()");
         ttt.text = "タイム";
         ttt.color = new Color(0, 0, 0);
         time_clear = timeLimit - time;
@@ -232,18 +230,18 @@ public class GameManagerScript : MonoBehaviour
 
     public void GameOver(){
         if(isClear) return;
-        Debug.Log("GameOver()");
+        // Debug.Log("GameOver()");
         isGameOver = true;
         gopAlpha = 1;
         GameUI.alpha = 0;
     }
 
     public void Reset(){ 
-        ResetGmsVariables();
-        ResetUIs();
-
+        charas.Clear();
         rms.Reset();
         bms.Reset();
+        ResetGmsVariables();
+        ResetUIs();
     }
 
     void ResetGmsVariables(){    // gmsの変数周りのリセット
@@ -261,7 +259,6 @@ public class GameManagerScript : MonoBehaviour
             if(enemies[i] != null) Destroy(enemies[i]);
         }
         enemies_count = 0;
-        charas.Clear();
     }
 
     void ResetUIs(){    // UI周りのリセット

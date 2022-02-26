@@ -1040,7 +1040,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -1600,8 +1600,8 @@ MonoBehaviour:
     type: 3}
   GameManager: {fileID: 1385723657}
   BreakerManager: {fileID: 94794555}
-  rooms_num_x: 8
-  rooms_num_z: 8
+  rooms_num_x: 6
+  rooms_num_z: 6
   bright_rooms: 
   walls: []
   start_x: 0
@@ -1902,6 +1902,7 @@ MonoBehaviour:
   GameOverText: {fileID: 1234113215}
   StartText: {fileID: 2000894041}
   timeLimit: 150
+  time: 0
   GameUI: {fileID: 914230982}
   gain_items: 0
   total_items: 4
