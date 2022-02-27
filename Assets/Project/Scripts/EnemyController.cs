@@ -31,7 +31,7 @@ public class EnemyController : MonoBehaviour
     float rot_y;
     bool isSetAngles, isTurning;
 
-    public bool isRush;
+    public bool foundLight, isRush;
     bool findLightSE;
     int[] rooms_isRushed = new int[2];
 
@@ -76,7 +76,7 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if(isRush){ // 突進時
+        if(foundLight){ // 突進時
             Rush();
             return;
         }
@@ -106,7 +106,7 @@ public class EnemyController : MonoBehaviour
         nrx = fl % rms.rooms_num_x;
         nrz = Mathf.FloorToInt(fl / rms.rooms_num_x);
         v = 0.8f;
-        isRush = true;
+        foundLight = true;
         time = 0;
     }
 
@@ -119,8 +119,9 @@ public class EnemyController : MonoBehaviour
             }
             return;
         }
+
+        if(!isRush) isRush = true;
         ll.intensity = 100;
-        
         Vector3 g_pos = this.transform.position;
         Vector3 nr_pos = rms.rooms[nrx, nrz].transform.position;
         nr_pos = new Vector3(nr_pos.x, g_pos.y, nr_pos.z);
@@ -143,6 +144,7 @@ public class EnemyController : MonoBehaviour
             rooms_isRushed[1] = rz * rms.rooms_num_x + rx;
             findLightSE = false;
             rushSE = false;
+            foundLight = false;
             isRush = false;
         }
         else{

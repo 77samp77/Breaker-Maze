@@ -152,7 +152,7 @@ public class PlayerController : MonoBehaviour
                 AudioSource.PlayOneShot(sound_collide);
                 gms.GameOver();
             }
-            else if(p_light.activeSelf){
+            else if(p_light.activeSelf || ec.foundLight){
                 ec.GameOver();
             }
             wallUIPanel.GetComponent<Image>().color = new Color(0.9f, 0.5f, 0.5f, 1);
