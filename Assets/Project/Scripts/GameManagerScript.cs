@@ -11,6 +11,8 @@ public class GameManagerScript : MonoBehaviour
     public bool enemyFindPlayer;
     public bool toReturn;
 
+    public GameObject TextManager;
+    TextManager tms;
     public GameObject RoomManager;
     RoomManager rms;
     public GameObject BreakerManager;
@@ -59,13 +61,14 @@ public class GameManagerScript : MonoBehaviour
     public List<GameObject> trans_walls = new List<GameObject>();   // 透過する壁
     public List<GameObject> not_trans_walls = new List<GameObject>();   // 透過しない壁
 
-    int floor = 1;
+    public int floor = 1;
 
     void Start()
     {
         Application.targetFrameRate = 60;
 
         InitVariables();
+        SetFloorText();
         time = timeLimit;
         clearPanel.SetActive(false);
     }
@@ -73,6 +76,7 @@ public class GameManagerScript : MonoBehaviour
     void InitVariables(){   // 変数の初期化
         rms = RoomManager.GetComponent<RoomManager>();
         bms = BreakerManager.GetComponent<BreakerManager>();
+        tms = TextManager.GetComponent<TextManager>();
 
         stt = secText.GetComponent<Text>();
         ttt = timeText.GetComponent<Text>();
@@ -95,8 +99,6 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
-        ftt.text = "<size=40>B" + floor + "</size><size=30>F</size>";
-
         if(enemies_count < enemy_put_sec.Length){
             enemy_time = timeLimit - time;
             if(enemy_time > enemy_put_sec[enemies_count]){
@@ -120,12 +122,8 @@ public class GameManagerScript : MonoBehaviour
                 startAlpha -= 0.02f;
                 StartText.GetComponent<Text>().color = new Color(1, 1, 1, startAlpha);
             }
-
-            ictt.text = "<size=50>" + gain_items + "</size> /" + total_items;
-            if(time < 20) ttt.color = new Color(1, 0, 0);
-            if(time < 5) gopAlpha = 1 - time / 5;
-            if(time <= 0) GameOver();
-            stt.text = time.ToString("N1") + "sec";
+            SetItemCountText();
+            SetTimeSecondText();
         }
 
         if(isStart){
@@ -211,10 +209,7 @@ public class GameManagerScript : MonoBehaviour
 
     void SwitchReturn(){    // 行き→戻りの転換
         toReturn = true;
-        itemsCountText.SetActive(false);
-        itt.text = "緑の光に\n向かえ!";
-        itt.color = new Color(0, 0.6f, 0);
-        itt.fontSize = 30;
+        SetGoGreenLightText();
     }
 
     void DisplayGameOverPanel(){    // gop,gotAlphaに合わせてGameOverPanelを表示
@@ -227,13 +222,12 @@ public class GameManagerScript : MonoBehaviour
 
     public void SetClear(){ // クリアタイムの決定、ClearUIを変更
         // Debug.Log("Clear()");
-        ttt.text = "タイム";
+        ttt.text = tms.time();
         ttt.color = new Color(0, 0, 0);
         time_clear = timeLimit - time;
-        stt.text = time_clear.ToString("N1") + "sec";
+        stt.text = tms.timeSecond(time_clear);
         stt.color = new Color(0, 0, 0);
-        itemPanel.SetActive(false);
-        itemText.SetActive(false);
+
         clearPanel.SetActive(true);
         GameUI.alpha = 0;
         isClear = true;
@@ -252,8 +246,9 @@ public class GameManagerScript : MonoBehaviour
         charas.Clear();
         rms.Reset();
         bms.Reset();
-        ResetGmsVariables();
         ResetUIs();
+        ResetGmsVariables();
+        ResetUIsTexts();
     }
 
     void ResetGmsVariables(){    // gmsの変数周りのリセット
@@ -280,18 +275,25 @@ public class GameManagerScript : MonoBehaviour
         gotAlpha = 0;
         got.color = new Color(1, 1, 1, gotAlpha);
         gopAlpha = 0;
-        GameUI.alpha = 0;
+        if(isClear) GameUI.alpha = 1;
         
         itemPanel.SetActive(true);
         itemText.SetActive(true);
         itemsCountText.SetActive(true);
-        itt.text = "アイテム";
+        itt.text = tms.item();
         itt.color = new Color(0, 0, 0);
         itt.fontSize = 14;
 
-        ttt.text = "残り:";
+        ttt.text = tms.remain();
         ttt.color = new Color(0, 0, 0);
         clearPanel.SetActive(false);
+    }
+
+    void ResetUIsTexts(){
+        SetFloorText();
+        SetItemCountText();
+        SetTimeSecondText();
+        bms.SetAmpsText();
     }
 
     public void Set_EnemyFindPlayer(){  // 衝突以外でのゲームオーバー時
@@ -306,5 +308,27 @@ public class GameManagerScript : MonoBehaviour
         if(isPause) return true;
         if(enemyFindPlayer) return true;
         return false;
+    }
+
+    void SetFloorText(){
+        ftt.text = tms.floor(floor);
+    }
+
+    void SetItemCountText(){
+        ictt.text = tms.itemCount(gain_items, total_items);
+        if(time < 20) ttt.color = new Color(1, 0, 0);
+        if(time < 5) gopAlpha = 1 - time / 5;
+        if(time <= 0) GameOver();
+    }
+
+    void SetGoGreenLightText(){
+        itemsCountText.SetActive(false);
+        itt.text = tms.goGreenLight();
+        itt.color = new Color(0, 0.6f, 0);
+        itt.fontSize = 30;
+    }
+
+    void SetTimeSecondText(){
+        stt.text = tms.timeSecond(time);
     }
 }

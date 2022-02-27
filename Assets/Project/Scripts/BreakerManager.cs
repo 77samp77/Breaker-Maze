@@ -12,6 +12,9 @@ public class BreakerManager : MonoBehaviour
     public GameObject rm;
     RoomManager rms;
 
+    public GameObject tm;
+    TextManager tms;
+
     public GameObject ampsText;
     TextMeshProUGUI att;
     Color def_attc;
@@ -29,6 +32,7 @@ public class BreakerManager : MonoBehaviour
     void InitVariables(){   // 変数の初期化
         gms = gm.GetComponent<GameManagerScript>();
         rms = rm.GetComponent<RoomManager>();
+        tms = tm.GetComponent<TextManager>();
         rnx = rms.rooms_num_x;
         rnz = rms.rooms_num_z;
 
@@ -41,12 +45,7 @@ public class BreakerManager : MonoBehaviour
         if(gms.GameIsStop()) return;
 
         if(CalAmp() > limit) Trip();
-
-        if(isTrip) att.text = "<size=35>TRIP!!</size>";
-        else att.text = "<size=40>" + CalAmp() + "</size><size=25>A</size> /" + limit + "A";
-
-        if(isTrip || CalAmp() > limit - 2) att.color = new Color(1, 0, 0);
-        else att.color = def_attc;
+        SetAmpsText();
     }
 
     public int CalAmp(){    // 電流の計算
@@ -75,5 +74,13 @@ public class BreakerManager : MonoBehaviour
 
     public void Reset(){
         isTrip = false;
+    }
+
+    public void SetAmpsText(){
+        if(isTrip) att.text = tms.trip();
+        else att.text = tms.amps(CalAmp(), limit);
+
+        if(isTrip || CalAmp() > limit - 2) att.color = new Color(1, 0, 0);
+        else att.color = def_attc;
     }
 }
