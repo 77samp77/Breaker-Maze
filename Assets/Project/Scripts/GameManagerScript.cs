@@ -137,7 +137,7 @@ public class GameManagerScript : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
     }
 
-    void TransparentWalls(){    // 壁透過
+    void TransparentWalls(){    // 壁透過メイン
         InitTransWallsArray();
         InitNotTransWallArray();
         foreach(GameObject twall in trans_walls){
@@ -160,6 +160,7 @@ public class GameManagerScript : MonoBehaviour
     void InitTransWallsArray(){ // trans_walls(透過する壁の配列)の初期化
         trans_walls.Clear();
         foreach(GameObject chara in charas){
+            if(!chara.activeSelf) continue;
             int rx = 0, rz = 0;
             if(chara.name == "Player"){
                 PlayerController pcs = chara.GetComponent<PlayerController>();
@@ -176,9 +177,9 @@ public class GameManagerScript : MonoBehaviour
                 rx = ics.rx;
                 rz = ics.rz;
             }
+
             GameObject c_light = rms.rooms[rx, rz].transform.Find("Light").gameObject;
             if(!c_light.activeSelf) continue;
-
             Vector3 chara_screen_pos = Camera.main.WorldToScreenPoint(chara.transform.position);
             Ray ray_chara = Camera.main.ScreenPointToRay(chara_screen_pos);
             RaycastHit[] hits = Physics.RaycastAll(ray_chara);
