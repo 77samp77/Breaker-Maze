@@ -99,6 +99,25 @@ public class GameManagerScript : MonoBehaviour
 
     void Update()
     {
+        ManageEnemyTime();
+        TransparentWalls();
+
+        if(GameIsStop()){
+            if(!isPause) Direction_EnemyFindPlayer();
+        }
+        else{
+            time -= Time.deltaTime;
+            SetUIsInGame();
+        }
+
+        if(isStart && !toReturn && gain_items == total_items) SwitchReturn();
+        DisplayGameOverPanel();
+
+        if(Input.GetKeyDown(KeyCode.R)) Reset();
+        if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
+    }
+
+    void ManageEnemyTime(){
         if(enemies_count < enemy_put_sec.Length){
             enemy_time = timeLimit - time;
             if(enemy_time > enemy_put_sec[enemies_count]){
@@ -106,33 +125,21 @@ public class GameManagerScript : MonoBehaviour
                 rms.SetEnemy();
             }
         }
+    }
 
-        TransparentWalls();
+    void Direction_EnemyFindPlayer(){
+        time_enemyFindPlayer += Time.deltaTime;
+        if(!isGameOver && time_enemyFindPlayer - time > 1) GameOver();
+    }
 
-        if(GameIsStop()){
-            if(!isPause){
-                time_enemyFindPlayer += Time.deltaTime;
-                if(!isGameOver && time_enemyFindPlayer - time > 1) GameOver();
-            }
+    void SetUIsInGame(){
+        if(GameUI.alpha < 1){
+            GameUI.alpha += 0.02f;
+            startAlpha -= 0.02f;
+            StartText.GetComponent<Text>().color = new Color(1, 1, 1, startAlpha);
         }
-        else{
-            time -= Time.deltaTime;
-            if(GameUI.alpha < 1){
-                GameUI.alpha += 0.02f;
-                startAlpha -= 0.02f;
-                StartText.GetComponent<Text>().color = new Color(1, 1, 1, startAlpha);
-            }
-            SetItemCountText();
-            SetTimeSecondText();
-        }
-
-        if(isStart){
-            if(!toReturn && gain_items == total_items) SwitchReturn();
-        }
-        DisplayGameOverPanel();
-
-        if(Input.GetKeyDown(KeyCode.R)) Reset();
-        if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
+        SetItemCountText();
+        SetTimeSecondText();
     }
 
     void TransparentWalls(){    // 壁透過メイン
@@ -277,8 +284,6 @@ public class GameManagerScript : MonoBehaviour
         gopAlpha = 0;
         if(isClear) GameUI.alpha = 1;
         
-        itemPanel.SetActive(true);
-        itemText.SetActive(true);
         itemsCountText.SetActive(true);
         itt.text = tms.item();
         itt.color = new Color(0, 0, 0);

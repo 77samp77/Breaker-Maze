@@ -66,9 +66,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gms.GameIsStop() && gms.isStart){
-            return;
-        }
+        if(gms.GameIsStop() && gms.isStart) return;
 
         move();
         SetPositions();

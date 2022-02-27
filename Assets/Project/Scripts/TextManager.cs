@@ -36,7 +36,7 @@ public class TextManager : MonoBehaviour
     }
 
     public string goGreenLight(){
-        return "緑の光に\n向かえ!";
+        return "ハシゴに\n向かえ!";
     }
 
     public string time(){
