@@ -162,6 +162,7 @@ public class GameManagerScript : MonoBehaviour
         foreach(GameObject chara in charas){
             if(!chara.activeSelf) continue;
             int rx = 0, rz = 0;
+            bool isTransWall = false;
             if(chara.name == "Player"){
                 PlayerController pcs = chara.GetComponent<PlayerController>();
                 rx = pcs.rx;
@@ -171,6 +172,7 @@ public class GameManagerScript : MonoBehaviour
                 EnemyController ecs = chara.GetComponent<EnemyController>();
                 rx = ecs.rx;
                 rz = ecs.rz;
+                isTransWall = !ecs.isStart;
             }
             else if(chara.name == "Item"){
                 ItemController ics = chara.GetComponent<ItemController>();
@@ -179,7 +181,7 @@ public class GameManagerScript : MonoBehaviour
             }
 
             GameObject c_light = rms.rooms[rx, rz].transform.Find("Light").gameObject;
-            if(!c_light.activeSelf) continue;
+            if(!isTransWall && !c_light.activeSelf) continue;
             Vector3 chara_screen_pos = Camera.main.WorldToScreenPoint(chara.transform.position);
             Ray ray_chara = Camera.main.ScreenPointToRay(chara_screen_pos);
             RaycastHit[] hits = Physics.RaycastAll(ray_chara);

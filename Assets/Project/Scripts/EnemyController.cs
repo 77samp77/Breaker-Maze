@@ -35,8 +35,8 @@ public class EnemyController : MonoBehaviour
     bool findLightSE;
     int[] rooms_isRushed = new int[2];
 
-    bool isStart, appearSE;
-    bool moveSE, rushSE, hitSE;
+    public bool isStart;
+    bool appearSE, moveSE, rushSE;
 
     float time;
 
