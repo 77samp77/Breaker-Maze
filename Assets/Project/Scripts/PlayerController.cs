@@ -76,8 +76,6 @@ public class PlayerController : MonoBehaviour
         CalFearGauge();
         if(Input.GetKeyDown(KeyCode.Space)) Examine(rx, rz);
         CheckTouchingEnemy();
-
-        if(!gms.isClear && GameIsClear()) GameClear();
     }
 
     void move(){    // 移動
@@ -136,6 +134,7 @@ public class PlayerController : MonoBehaviour
                 colliders[eil].SetActive(false);
                 colliders.RemoveAt(eil);
             }
+            else if(ExistInList(colliders, "Ladder") != -1 && gms.toReturn) GameClear();
             else if(ExistInList(colliders, "Breaker") != -1) bms.isTrip = false;
             else turnLight(px, pz, p_light, p_lms);
         }
@@ -156,13 +155,6 @@ public class PlayerController : MonoBehaviour
             wallUIPanel.GetComponent<Image>().color = new Color(0.9f, 0.5f, 0.5f, 1);
         }
         else wallUIPanel.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-    }
-
-    bool GameIsClear(){ // ゲームクリアの条件を満たしているか
-        if(!gms.toReturn) return false;
-        if(rx != rms.goal_x) return false;
-        if(rz != rms.goal_z) return false;
-        return true;
     }
 
     void GameClear(){   // ゲームクリアの処理

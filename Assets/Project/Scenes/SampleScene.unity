@@ -1085,7 +1085,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -1681,8 +1681,8 @@ MonoBehaviour:
     type: 3}
   GameManager: {fileID: 1385723657}
   BreakerManager: {fileID: 94794555}
-  rooms_num_x: 6
-  rooms_num_z: 6
+  rooms_num_x: 5
+  rooms_num_z: 5
   bright_rooms: 
   walls: []
   start_x: 0
