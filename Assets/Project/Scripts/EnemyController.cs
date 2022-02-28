@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
     public bool isStart;
     bool appearSE, moveSE, rushSE;
 
-    float time;
+    public float time;
 
     public AudioClip sound_appear;
     public AudioClip sound_findLight;

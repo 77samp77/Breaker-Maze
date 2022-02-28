@@ -74,6 +74,8 @@ public class BreakerManager : MonoBehaviour
 
     public void Reset(){
         isTrip = false;
+        rnx = rms.rooms_num_x;
+        rnz = rms.rooms_num_z;
     }
 
     public void SetAmpsText(){

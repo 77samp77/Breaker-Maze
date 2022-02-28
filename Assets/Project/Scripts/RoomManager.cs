@@ -639,6 +639,7 @@ public class RoomManager : MonoBehaviour
 
     public void Reset(){
         Init_Destroy();
+        rooms_num_x = ++rooms_num_z;
         Init_Set();
     }
 
@@ -661,9 +662,9 @@ public class RoomManager : MonoBehaviour
 
     int rooms_num;
     void Init_Set(){    // 初期化の生成関連
-        SetStartPosition();
-        
         rooms_num = rooms_num_x * rooms_num_z;
+
+        SetStartPosition();
         SetItemsPosition();
         SetLightVals();
         
