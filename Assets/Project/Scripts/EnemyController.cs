@@ -18,6 +18,7 @@ public class EnemyController : MonoBehaviour
     PlayerController pcs;
 
     public int rx, rz; // 今いる部屋(相対座標)
+    public int rx_tw, rz_tw; // 今いる部屋(壁透過用)
     public int nrx, nrz;    // 次いく部屋(相対座標)
 
     public float v;
@@ -75,6 +76,10 @@ public class EnemyController : MonoBehaviour
             DisplayAppear();
             return;
         }
+        
+        Vector3 e_pos = this.transform.localPosition;
+        rx_tw = Mathf.FloorToInt((e_pos.x + rms.f_scl.x / 2) / rms.f_scl.x);
+        rz_tw = Mathf.FloorToInt((e_pos.z + rms.f_scl.z / 2) / rms.f_scl.z);
 
         if(foundLight){ // 突進時
             Rush();

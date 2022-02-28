@@ -47,7 +47,7 @@ public class RoomManager : MonoBehaviour
     int[] item_x;
     int[] item_z;
 
-    Vector3 f_scl;  // 部屋1つのlocalScale
+    public Vector3 f_scl;  // 部屋1つのlocalScale
 
     GameObject Player;
     PlayerController pcs;

@@ -36,14 +36,11 @@ public class GameManagerScript : MonoBehaviour
     public GameObject GameOverPanel;
     public float gopAlpha;
 
-    public GameObject StartText;
-    float startAlpha = 1;
-
     public float timeLimit;
     public float time;
     float time_clear, time_enemyFindPlayer;
 
-    public CanvasGroup GameUI, GameOverTexts;
+    public CanvasGroup GameUI, GameOverTexts, TitleUI;
 
     public int gain_items;
     public int total_items;
@@ -99,7 +96,7 @@ public class GameManagerScript : MonoBehaviour
         TransparentWalls();
 
         if(GameIsStop()){
-            if(!isPause) Direction_EnemyFindPlayer();
+            if(enemyFindPlayer) Direction_EnemyFindPlayer();
         }
         else{
             time -= Time.deltaTime;
@@ -133,8 +130,7 @@ public class GameManagerScript : MonoBehaviour
     void SetUIsInGame(){
         if(GameUI.alpha < 1){
             GameUI.alpha += 0.02f;
-            startAlpha -= 0.02f;
-            StartText.GetComponent<Text>().color = new Color(1, 1, 1, startAlpha);
+            TitleUI.alpha -= 0.02f;
         }
         SetItemCountText();
         SetTimeSecondText();
@@ -173,14 +169,14 @@ public class GameManagerScript : MonoBehaviour
             }
             else if(chara.name == "Enemy"){
                 EnemyController ecs = chara.GetComponent<EnemyController>();
-                rx = ecs.rx;
-                rz = ecs.rz;
-                isTransWall = !ecs.isStart;
+                rx = ecs.rx_tw;
+                rz = ecs.rz_tw;
+                isTransWall = (!ecs.isStart || ecs.foundLight || ecs.isRush);
             }
             else if(chara.name == "Item"){
                 ItemController ics = chara.GetComponent<ItemController>();
-                rx = ics.rx;
-                rz = ics.rz;
+                rx = ics.rx_tw;
+                rz = ics.rz_tw;
             }
 
             GameObject c_light = rms.rooms[rx, rz].transform.Find("Light").gameObject;

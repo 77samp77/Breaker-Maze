@@ -11,6 +11,7 @@ public class ItemController : MonoBehaviour
     RoomManager rms;
 
     public int rx, rz; // 今いる部屋(相対座標)
+    public int rx_tw, rz_tw;  // 今いる部屋(壁透過用)
     public int nrx, nrz;    // 次いく部屋(相対座標)
 
     public float v;
@@ -41,6 +42,10 @@ public class ItemController : MonoBehaviour
         if((rx == nrx) && (rz == nrz)) DecideNextRoom();
         if(time < interval) return;
         move();
+
+        Vector3 i_pos = this.transform.position;
+        rx_tw = Mathf.FloorToInt((i_pos.x + rms.f_scl.x / 2) / rms.f_scl.x);
+        rz_tw = Mathf.FloorToInt((i_pos.z + rms.f_scl.z / 2) / rms.f_scl.z);
     }
 
     void DecideNextRoom(){  // 次の部屋を決める
