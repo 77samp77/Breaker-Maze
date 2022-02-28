@@ -35,9 +35,6 @@ public class GameManagerScript : MonoBehaviour
 
     public GameObject GameOverPanel;
     public float gopAlpha;
-    public GameObject GameOverText;
-    Text got;
-    float gotAlpha;
 
     public GameObject StartText;
     float startAlpha = 1;
@@ -46,7 +43,7 @@ public class GameManagerScript : MonoBehaviour
     public float time;
     float time_clear, time_enemyFindPlayer;
 
-    public CanvasGroup GameUI;
+    public CanvasGroup GameUI, GameOverTexts;
 
     public int gain_items;
     public int total_items;
@@ -83,7 +80,6 @@ public class GameManagerScript : MonoBehaviour
         ftt = floorText.GetComponent<TextMeshProUGUI>();
         itt = itemText.GetComponent<Text>();
         ictt = itemsCountText.GetComponent<TextMeshProUGUI>();
-        got = GameOverText.GetComponent<Text>();
 
         enemies_count_max = enemy_put_sec.Length;
         enemies = new GameObject[enemies_count_max];
@@ -113,8 +109,10 @@ public class GameManagerScript : MonoBehaviour
         if(isStart && !toReturn && gain_items == total_items) SwitchReturn();
         DisplayGameOverPanel();
 
-        if(Input.GetKeyDown(KeyCode.R)) Reset();
-        if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
+        if(isClear || isGameOver){
+            if(Input.GetKeyDown(KeyCode.Space)) Reset();
+        }
+        else if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
     }
 
     void ManageEnemyTime(){
@@ -219,12 +217,9 @@ public class GameManagerScript : MonoBehaviour
         SetGoGreenLightText();
     }
 
-    void DisplayGameOverPanel(){    // gop,gotAlphaに合わせてGameOverPanelを表示
+    void DisplayGameOverPanel(){    // gopに合わせてGameOverPanelを表示
         GameOverPanel.GetComponent<Image>().color = new Color(0, 0, 0, gopAlpha);
-        if(isGameOver){
-            gotAlpha += 0.02f;
-            got.color = new Color(1, 1, 1, gotAlpha);
-        }
+        if(isGameOver) GameOverTexts.alpha += 0.02f;
     }
 
     public void SetClear(){ // クリアタイムの決定、ClearUIを変更
@@ -279,8 +274,7 @@ public class GameManagerScript : MonoBehaviour
     }
 
     void ResetUIs(){    // UI周りのリセット
-        gotAlpha = 0;
-        got.color = new Color(1, 1, 1, gotAlpha);
+        GameOverTexts.alpha = 0;
         gopAlpha = 0;
         if(isClear) GameUI.alpha = 1;
         
