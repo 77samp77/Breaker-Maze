@@ -89,7 +89,7 @@ public class GameManagerScript : MonoBehaviour
         enemies = new GameObject[enemies_count_max];
 
         int temp_sec = 15;
-        int temp_inc_sec = 15;
+        int temp_inc_sec = 20;
         for(int i = 0; i < enemy_put_sec.Length; i++){
             enemy_put_sec[i] = temp_sec;
             temp_sec += temp_inc_sec;
