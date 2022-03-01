@@ -8,18 +8,22 @@ public class UIManager : MonoBehaviour
 {
     public GameObject gameManager;
     GameManagerScript gms;
-
+    public GameObject roomManager;
+    RoomManager rms;
     public GameObject textManager;
     TextManager tms;
 
     public GameObject optionPanel;
     public GameObject roomsNumText;
-    public TextMeshProUGUI rntt;
+    TextMeshProUGUI rntt;
+
+    public GameObject checkIncreaseRoom;
 
     // Start is called before the first frame update
     void Start()
     {
         gms = gameManager.GetComponent<GameManagerScript>();
+        rms = roomManager.GetComponent<RoomManager>();
         tms = textManager.GetComponent<TextManager>();
         rntt = roomsNumText.GetComponent<TextMeshProUGUI>();
     }
@@ -37,22 +41,29 @@ public class UIManager : MonoBehaviour
     }
 
     public void OpenOptionPanel(){
+        gms.isPause = true;
         optionPanel.SetActive(true);
     }
 
     public void CloseOptionPanel(){
+        gms.isPause = false;
         optionPanel.SetActive(false);
     }
 
     public void IncreaseRoomsNum(){
-        if(rooms_num_opt < 12) rooms_num_opt++;
+        if(rooms_num_opt < rms.rooms_num_max) rooms_num_opt++;
     }
 
     public void DecreaseRoomsNum(){
-        if(rooms_num_opt > 5) rooms_num_opt--;
+        if(rooms_num_opt > rms.rooms_num_min) rooms_num_opt--;
     }
 
     public void GenerateMaze(){
         gms.Reset(rooms_num_opt, rooms_num_opt);
+    }
+
+    public void CheckBoxIncreaseRoom(){
+        gms.increaseRoom = !gms.increaseRoom;
+        checkIncreaseRoom.SetActive(gms.increaseRoom);
     }
 }

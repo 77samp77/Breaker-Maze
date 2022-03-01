@@ -7,7 +7,8 @@ using TMPro;
 public class GameManagerScript : MonoBehaviour
 {
     public bool isStart, isClear;
-    bool isGameOver, isPause;
+    bool isGameOver;
+    public bool isPause;
     public bool enemyFindPlayer;
     public bool toReturn;
 
@@ -17,6 +18,8 @@ public class GameManagerScript : MonoBehaviour
     RoomManager rms;
     public GameObject BreakerManager;
     BreakerManager bms;
+    public GameObject UIManager;
+    UIManager ums;
 
     public GameObject clearPanel;
 
@@ -56,6 +59,7 @@ public class GameManagerScript : MonoBehaviour
     public List<GameObject> not_trans_walls = new List<GameObject>();   // 透過しない壁
 
     public int floor = 1;
+    public bool increaseRoom = true;
 
     void Start()
     {
@@ -71,6 +75,7 @@ public class GameManagerScript : MonoBehaviour
         rms = RoomManager.GetComponent<RoomManager>();
         bms = BreakerManager.GetComponent<BreakerManager>();
         tms = TextManager.GetComponent<TextManager>();
+        ums = UIManager.GetComponent<UIManager>();
 
         stt = secText.GetComponent<Text>();
         ttt = timeText.GetComponent<Text>();
@@ -107,9 +112,20 @@ public class GameManagerScript : MonoBehaviour
         DisplayGameOverPanel();
 
         if(isClear || isGameOver){
-            if(Input.GetKeyDown(KeyCode.Space)) Reset(rms.rooms_num_x + 1, rms.rooms_num_z + 1);
+            if(Input.GetKeyDown(KeyCode.Space)){
+                int next_rNum_x = rms.rooms_num_x, next_rNum_z = rms.rooms_num_z;
+                if(isClear && increaseRoom){
+                    if(rms.rooms_num_x < rms.rooms_num_max) next_rNum_x++;
+                    if(rms.rooms_num_z < rms.rooms_num_max) next_rNum_z++;
+                }
+                else if(isGameOver) next_rNum_x = next_rNum_z = rms.rooms_num_min;
+                Reset(next_rNum_x, next_rNum_z);
+            }
         }
-        else if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
+        else if(Input.GetKeyDown(KeyCode.O)){
+            if(!isPause) ums.OpenOptionPanel();
+            else ums.CloseOptionPanel();
+        }
     }
 
     void ManageEnemyTime(){
@@ -219,7 +235,6 @@ public class GameManagerScript : MonoBehaviour
     }
 
     public void SetClear(){ // クリアタイムの決定、ClearUIを変更
-        // Debug.Log("Clear()");
         ttt.text = tms.time();
         ttt.color = new Color(0, 0, 0);
         time_clear = timeLimit - time;
@@ -234,7 +249,6 @@ public class GameManagerScript : MonoBehaviour
 
     public void GameOver(){
         if(isClear) return;
-        // Debug.Log("GameOver()");
         isGameOver = true;
         gopAlpha = 1;
         GameUI.alpha = 0;

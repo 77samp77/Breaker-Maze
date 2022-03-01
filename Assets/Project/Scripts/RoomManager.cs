@@ -25,6 +25,7 @@ public class RoomManager : MonoBehaviour
 
     public int rooms_num_x;
     public int rooms_num_z;
+    public int rooms_num_min = 5, rooms_num_max = 12;
     public GameObject[,] rooms;
     int fixLights_count, fixLights_max;
 
