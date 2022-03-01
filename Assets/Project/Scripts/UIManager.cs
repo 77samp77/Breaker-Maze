@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     public GameObject roomsNumText;
     TextMeshProUGUI rntt;
 
-    public GameObject checkIncreaseRoom;
+    public GameObject checkIncreaseRoom, checkDirectionalLight;
 
     // Start is called before the first frame update
     void Start()
@@ -65,5 +65,10 @@ public class UIManager : MonoBehaviour
     public void CheckBoxIncreaseRoom(){
         gms.increaseRoom = !gms.increaseRoom;
         checkIncreaseRoom.SetActive(gms.increaseRoom);
+    }
+
+    public void CheckBoxDirectionalLight(){
+        gms.DirectionalLight.SetActive(!gms.DirectionalLight.activeSelf);
+        checkDirectionalLight.SetActive(gms.DirectionalLight.activeSelf);
     }
 }

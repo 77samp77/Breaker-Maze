@@ -6,6 +6,8 @@ using TMPro;
 
 public class GameManagerScript : MonoBehaviour
 {
+    public GameObject DirectionalLight;
+    
     public bool isStart, isClear;
     bool isGameOver;
     public bool isPause;
