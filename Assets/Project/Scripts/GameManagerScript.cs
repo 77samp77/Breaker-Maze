@@ -107,7 +107,7 @@ public class GameManagerScript : MonoBehaviour
         DisplayGameOverPanel();
 
         if(isClear || isGameOver){
-            if(Input.GetKeyDown(KeyCode.Space)) Reset();
+            if(Input.GetKeyDown(KeyCode.Space)) Reset(rms.rooms_num_x + 1, rms.rooms_num_z + 1);
         }
         else if(Input.GetKeyDown(KeyCode.P)) isPause = !isPause;
     }
@@ -240,9 +240,9 @@ public class GameManagerScript : MonoBehaviour
         GameUI.alpha = 0;
     }
 
-    public void Reset(){ 
+    public void Reset(int rNum_x, int rNum_z){ 
         charas.Clear();
-        rms.Reset();
+        rms.Reset(rNum_x, rNum_z);
         bms.Reset();
         ResetUIs();
         ResetGmsVariables();

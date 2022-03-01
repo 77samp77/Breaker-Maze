@@ -54,4 +54,8 @@ public class TextManager : MonoBehaviour
     public string amps(int amp, int limit){
         return "<size=40>" + amp + "</size><size=25>A</size> /" + limit + "A";
     }
+
+    public string rooms_num_inOption(int num){
+        return "<size=45>" + num + "</size><size=32> × </size><size=45>" + num + "</size>";
+    }
 }

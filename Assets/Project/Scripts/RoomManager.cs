@@ -637,9 +637,10 @@ public class RoomManager : MonoBehaviour
         return r_light.activeSelf;
     }
 
-    public void Reset(){
+    public void Reset(int rNum_x, int rNum_z){
         Init_Destroy();
-        rooms_num_x = ++rooms_num_z;
+        rooms_num_x = rNum_x;
+        rooms_num_z = rNum_z;
         Init_Set();
     }
 
